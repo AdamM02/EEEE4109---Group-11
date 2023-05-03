@@ -40,9 +40,9 @@ void setup()
 
 void loop() 
 {
-  double test2DArray[1][4];
+  double test2DArray[3][4];
 
-  for(int M=0;M<1;++M)
+  for(int M=0;M<3;++M)
   {
     for(int N=0;N<4;++N)
     {
