@@ -1,0 +1,73 @@
+/* --------------------------------------------------------------------
+  SD card write test code
+  
+  Program to test if a micro-SD card can be detected, 
+  open a file, write to the file and then close it. 
+
+  Hardware connections using Arduino Nano:
+  MOSI - pin 11
+  MISO - pin 12
+  CLK - pin 13
+  SS - pin 4
+
+  Required header files:
+  Publically available header files:
+  - SPI.h
+  - SdFat.h
+
+  Bespoke header files:
+  - SDwrite.h
+
+  Adam Machin, 2023
+  ----------------------------------------------------------------------- */
+#include <SdFat.h>
+#include "microSDwrite.h"
+#include <SPI.h>
+
+#define chipSelect 4
+//define chipSelect pin
+
+void setup() 
+{
+  pinMode(chipSelect, OUTPUT);
+
+  Serial.begin(9600);
+  delay(500);
+
+  SPI.begin();
+  Serial.println("Initialisation complete");
+}
+
+void loop() 
+{
+  double test2DArray[1][4];
+
+  for(int M=0;M<1;++M)
+  {
+    for(int N=0;N<4;++N)
+    {
+      test2DArray[M][N] = random(-10,10);
+      Serial.print(test2DArray[M][N]);
+      Serial.print("\t");
+    }
+
+    Serial.print("\n");
+  }
+  //create and fill a 2D array with random values between -10 and 10
+
+  //if SD card present, call function
+  if(sd.begin(chipSelect, SPI_HALF_SPEED))
+  {
+    writeDataToSD(test2DArray, 3);
+    //call function to write data
+  }
+  else
+  {
+    Serial.println("No SD card detected");
+    //error message that there is no SD card / if there is it cannot be read
+    //write function will not be called
+  }
+
+  Serial.println("------------------------------------------------");
+
+}
