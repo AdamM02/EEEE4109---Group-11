@@ -25,10 +25,10 @@ void writeDataToSD(double my2DArray[][4], int noOfRows)
     //error which completely stops the code
   }
 
-  myFile.print("05/04/2023");
-  myFile.print("\t");
-  myFile.print("15:05:34");
-  myFile.print("\t");
+  //myFile.print("05/04/2023");
+  //myFile.print("\t");
+  //myFile.print("15:05:34");
+  //myFile.print("\t");
 
   for(int N=0; N<noOfRows; ++N)
   {
