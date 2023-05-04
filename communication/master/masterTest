@@ -1,0 +1,89 @@
+/* --------------------------------------------------------------------
+  master LoRa communication test code
+  
+  Program to test if the master device can sned a request for some data
+  and receiving the data back from a slave(s)
+
+  To be used with the slave LoRa communication test
+
+  Hardware connections using Arduino Nano:
+  G0 - 3
+  SCK - 13
+  MISO - 12
+  MOSI - 11
+  CS - 10
+  RST - 9
+
+  Required header files:
+  Publically available header files:
+  - SPI.h
+  - RH_RF95.h
+
+  Bespoke header files:
+  - masterNode.h
+
+  Adam Machin, 2023
+  ----------------------------------------------------------------------- */
+#include <SPI.h>
+#include <RH_RF95.h>
+
+#include "masterNode.h"
+
+double returnedData[NO_OF_SLAVES][4]= {0};
+// rows then columns
+
+void setup() 
+{
+  pinMode(RFM95_RST, OUTPUT);
+  digitalWrite(RFM95_RST, HIGH);
+
+  //while (!Serial);
+  Serial.begin(9600);
+  delay(100);
+  //...
+
+  Serial.println("Master device communication test");
+
+  // manual reset
+  digitalWrite(RFM95_RST, LOW);
+  delay(10);
+  digitalWrite(RFM95_RST, HIGH);
+  delay(10);
+
+  while (!rf95.init()) {
+    Serial.println("LoRa radio init failed");
+    exit(1);
+  }
+  Serial.println("LoRa radio init OK!");
+
+  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
+  if (!rf95.setFrequency(RF95_FREQ)) {
+    Serial.println("setFrequency failed");
+    exit(2);
+  }
+  Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
+  
+  // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
+
+  // The default transmitter power is 13dBm, using PA_BOOST.
+  // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then 
+  // you can set transmitter powers from 5 to 23 dBm:
+  rf95.setTxPower(10, false);
+}
+
+void loop()
+{
+  getDataFromSlaves(returnedData);
+
+  // ------------- included for testing -------------
+  for(int N=0; N<NO_OF_SLAVES; ++N)
+  {                     
+    for(int M=0; M<4; ++M)
+    {
+      Serial.println(returnedData[N][M]);
+    }
+  }
+  // ------------------------------------------------
+
+  delay(10000);
+}
