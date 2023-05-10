@@ -1,0 +1,52 @@
+/* 
+ * TimeSerial.pde
+ * example code illustrating Time library set through serial port messages.
+ *
+ * Messages consist of the letter T followed by ten digit time (as seconds since Jan 1 1970)
+ * you can send the text on the next line using Serial Monitor to set the clock to noon Jan 1 2013
+ T1357041600  
+ *
+ * A Processing example sketch to automatically send the messages is included in the download
+ * On Linux, you can use "date +T%s\n > /dev/ttyACM0" (UTC time zone)
+ */ 
+ 
+#include <TimeLib.h>
+
+#define _hour 15
+#define _minute 30
+#define _second 0
+#define _day 5
+#define _month 4
+#define _year 2023
+
+void setup()  {
+  Serial.begin(9600);
+  pinMode(13, OUTPUT);
+
+  setTime(_hour, _minute, _second, _day, _month, _year);
+}
+
+void printTime()
+{
+  Serial.print(hour());
+  Serial.print(":");
+  Serial.print(minute());
+  Serial.print(":");
+  Serial.print(second());
+  Serial.print("\t");
+}
+
+void printDate()
+{
+  Serial.print(day());
+  Serial.print("/");
+  Serial.print(month());
+  Serial.print("/");
+  Serial.println(year());
+}
+
+void loop()
+{
+  printTime();
+  printDate();
+}
