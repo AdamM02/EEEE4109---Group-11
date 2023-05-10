@@ -1,0 +1,127 @@
+
+// With thanks to Donal Morrissey from which the example code was derived from
+
+#include <avr/sleep.h>
+#include <avr/power.h>
+#include <avr/wdt.h>
+
+
+#define LED_PIN 10   //testing only
+
+volatile int f_wdt=1;
+int timerCount = 0;
+
+int multipleOf8ToStopAt = 8;
+// Important variable to determine how often data is recorded
+// Watchdog timer is 8 seconds, therefore multiple x 8 = timer time.
+// For example, if multipleOf8ToStopAt = 8
+// timer time = 8 * 8 = 64 seconds
+
+void setup()
+{
+  Serial.begin(9600);
+  delay(100);
+  /*** Setup the WDT ***/
+
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
+  
+  /* Clear the reset flag. */
+  MCUSR &= ~(1<<WDRF);
+  
+  /* In order to change WDE or the prescaler, we need to
+   * set WDCE (This will allow updates for 4 clock cycles).
+   */
+  WDTCSR |= (1<<WDCE) | (1<<WDE);
+
+  /* set new watchdog timeout prescaler value */
+  WDTCSR = 1<<WDP0 | 1<<WDP3; /* 8.0 seconds */
+  
+  /* Enable the WD interrupt (note no reset). */
+  WDTCSR |= _BV(WDIE);
+}
+
+/***************************************************
+ *  Name:        ISR(WDT_vect)
+ *
+ *  Returns:     Nothing.
+ *
+ *  Parameters:  None.
+ *
+ *  Description: Watchdog Interrupt Service. This
+ *               is executed when watchdog timed out.
+ *
+ ***************************************************/
+ISR(WDT_vect)
+{
+  if(f_wdt == 0)
+  {
+    f_wdt=1;
+  }
+  else
+  {
+    Serial.println("WDT Overrun!!!");
+  }
+}
+
+/***************************************************
+ *  Name:        enterSleep
+ *
+ *  Returns:     Nothing.
+ *
+ *  Parameters:  None.
+ *
+ *  Description: Enters the arduino into sleep mode.
+ *
+ ***************************************************/
+void enterSleep(void)
+{
+  Serial.println("Entering sleep mode");
+  
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);   /* EDIT: could also use SLEEP_MODE_PWR_DOWN for lowest power consumption. */
+  sleep_enable();
+  
+  /* Now enter sleep mode. */
+  sleep_mode();
+}
+
+void exitSleep(void)
+{
+    /* The program will continue from here after the WDT timeout*/
+  sleep_disable(); /* First thing to do is disable sleep. */
+  
+  /* Re-enable the peripherals. */
+  power_all_enable();
+
+  Serial.println("Exiting sleep mode");
+}
+
+void loop()
+{
+  if(f_wdt == 1)
+  {
+    timerCount++;
+    f_wdt = 0;
+
+    Serial.println(timerCount);
+    
+    if(timerCount == multipleOf8ToStopAt)
+    {
+      exitSleep();
+      
+      Serial.println("We have reached the required time.");
+      
+      /* Don't forget to clear the flag. */
+      timerCount = 0;
+
+      
+      enterSleep();
+    }
+    else
+    {
+    }
+  }
+  else
+  {
+  }
+}
