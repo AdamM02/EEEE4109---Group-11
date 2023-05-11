@@ -12,13 +12,16 @@
 // - Wire.h
 // - SPI.h
 // - RH_RF95.h
-// - stdio.h
-// - string.h
 // - SparkFun_LPS28DFW_Arduino_Library.h
 //
 // Bespoke header files:
 // - slaveComms.h
 // - RotEncoder.h
+//
+// With thanks to:
+// - Mike McCauley of RadioHead libraries: https://www.airspayce.com/mikem/arduino/RadioHead/
+// - SparkFun: https://www.sparkfun.com/
+//             https://github.com/sparkfun/SparkFun_LPS28DFW_Arduino_Library
 //
 // Adam Machin, 2023
 //
@@ -26,8 +29,6 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <RH_RF95.h>
-#include <stdio.h>
-#include <string.h>
 #include "slaveComms.h"
 
 #include "RotEncoder.h"
