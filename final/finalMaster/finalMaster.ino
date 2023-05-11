@@ -23,6 +23,12 @@
 // - microSDwrite.h
 // - watchdog.h
 //
+// With special thanks to:
+// - Mike McCauley of the RadioHead library: https://www.airspayce.com/mikem/arduino/RadioHead/
+// - Paul Stogffregen of the TimeLib.h library: https://github.com/PaulStoffregen/Time
+//   (Note: if commercialising permission would be required from Paul)
+// - Bill Greiman of the SdFat.h library: https://github.com/greiman/SdFat
+//
 // Adam Machin, 2023
 //
 // --------------------------------------------------------------------------------------
